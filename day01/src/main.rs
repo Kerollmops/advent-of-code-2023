@@ -1,3 +1,4 @@
+use aho_corasick::AhoCorasick;
 use std::str::from_utf8;
 
 const INPUT: &str = include_str!("../input.txt");
@@ -19,8 +20,7 @@ fn main() {
     let answer = INPUT
         .lines()
         .map(|line| {
-            let first = find_first_digit(line) as usize;
-            let last = find_last_digit(line) as usize;
+            let (first, last) = find_first_and_last_digit(line);
             first * 10 + last
         })
         .sum::<usize>();
@@ -28,40 +28,23 @@ fn main() {
     println!("The second answer is: {answer}");
 }
 
-const DIGITS: &[(&str, u8)] = &[
-    ("0", 0),
-    ("1", 1),
-    ("2", 2),
-    ("3", 3),
-    ("4", 4),
-    ("5", 5),
-    ("6", 6),
-    ("7", 7),
-    ("8", 8),
-    ("9", 9),
-    ("one", 1),
-    ("two", 2),
-    ("three", 3),
-    ("four", 4),
-    ("five", 5),
-    ("six", 6),
-    ("seven", 7),
-    ("eight", 8),
-    ("nine", 9),
+const DIGIT_WORDS: &[&str] = &[
+    "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "one", "two", "three", "four", "five", "six",
+    "seven", "eight", "nine",
 ];
 
-fn find_first_digit(s: &str) -> u8 {
-    DIGITS
-        .iter()
-        .min_by_key(|(word, digit)| s.find(word).map_or((usize::MAX, u8::MAX), |p| (p, *digit)))
-        .map(|(_, d)| *d)
-        .unwrap()
-}
+const DIGITS: &[usize] = &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-fn find_last_digit(s: &str) -> u8 {
-    DIGITS
-        .iter()
-        .max_by_key(|(word, digit)| s.rfind(word).map_or((usize::MIN, u8::MIN), |p| (p, *digit)))
-        .map(|(_, d)| *d)
-        .unwrap()
+fn find_first_and_last_digit(line: &str) -> (usize, usize) {
+    let ac = AhoCorasick::builder()
+        .ascii_case_insensitive(false)
+        .build(DIGIT_WORDS)
+        .unwrap();
+
+    // FUCK IT! Don't forget that it must be overlapping!!!
+    let mut iter = ac.find_overlapping_iter(line);
+    let first_id = iter.next().unwrap().pattern().as_usize();
+    let last_id = iter.last().map_or(first_id, |m| m.pattern().as_usize());
+
+    (DIGITS[first_id], DIGITS[last_id])
 }
