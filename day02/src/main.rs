@@ -19,6 +19,21 @@ fn main() {
         .sum::<usize>();
 
     println!("The first answer is: {answer}");
+
+    let answer = INPUT
+        .lines()
+        .map(|line| Game::from_str(line).unwrap())
+        .map(|g| {
+            g.reveals.iter().fold(Reveal::default(), |acc, r| Reveal {
+                red: acc.red.max(r.red),
+                green: acc.green.max(r.green),
+                blue: acc.blue.max(r.blue),
+            })
+        })
+        .map(|Reveal { red, green, blue }| red * blue * green)
+        .sum::<usize>();
+
+    println!("The second answer is: {answer}");
 }
 
 struct Game {
