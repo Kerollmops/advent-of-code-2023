@@ -5,4 +5,5 @@ edition = "2021"
 
 [dependencies]
 anyhow = { version = "1.0.75", features = ["backtrace"] }
+ndarray = "0.15.6"
 slice-group-by = "0.3.1"
