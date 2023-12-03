@@ -6,9 +6,7 @@ fn main() {
     // What is the sum of the possible games IDs that could have been played with:
     // only 12 red cubes, 13 green cubes, and 14 blue cubes
     fn filter(g: &Game) -> bool {
-        g.reveals
-            .iter()
-            .all(|r| r.red <= 12 && r.green <= 13 && r.blue <= 14)
+        g.reveals.iter().all(|r| r.red <= 12 && r.green <= 13 && r.blue <= 14)
     }
 
     let answer = INPUT

@@ -1,5 +1,6 @@
-use aho_corasick::AhoCorasick;
 use std::str::from_utf8;
+
+use aho_corasick::AhoCorasick;
 
 const INPUT: &str = include_str!("../input.txt");
 
@@ -36,10 +37,7 @@ const DIGIT_WORDS: &[&str] = &[
 const DIGITS: &[usize] = &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 fn find_first_and_last_digit(line: &str) -> (usize, usize) {
-    let ac = AhoCorasick::builder()
-        .ascii_case_insensitive(false)
-        .build(DIGIT_WORDS)
-        .unwrap();
+    let ac = AhoCorasick::builder().ascii_case_insensitive(false).build(DIGIT_WORDS).unwrap();
 
     // FUCK IT! Don't forget that it must be overlapping!!!
     let mut iter = ac.find_overlapping_iter(line);
